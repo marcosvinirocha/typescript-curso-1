@@ -1,5 +1,6 @@
 import { Negociacao } from '../models/negociacao.js';
 import { Negociacoes } from '../models/negociacoes.js';
+import { MensagemView } from '../views/mensagem-view.js';
 import { NegociacoesView } from '../views/negociacoes.view.js';
 
 export class NecociacaoController {
@@ -8,6 +9,9 @@ export class NecociacaoController {
   private inputValor: HTMLInputElement;
   private negociacoes = new Negociacoes();
   private negociacaoView = new NegociacoesView('#negociacoesView');
+  private mensagemView = new MensagemView('#mensagemView');
+  private readonly SABADO = 6;
+  private readonly DOMINGO = 0;
 
   constructor() {
     this.inputData = document.querySelector('#data');
@@ -16,14 +20,22 @@ export class NecociacaoController {
     this.negociacaoView.update(this.negociacoes);
   }
 
-  adiciona(): void {
+  public adiciona(): void {
     const negociacao = this.criaNegociacao();
+    if (!this.ehDiaUltil(negociacao.data)) {
+      this.mensagemView.update('Somente negociações em dias úteis!');
+      return;
+    }
     this.negociacoes.adiciona(negociacao);
-    this.negociacaoView.update(this.negociacoes);
-    console.log(this.negociacoes.lista());
+    this.atualizarView();
     this.limparFormulario();
   }
-  criaNegociacao(): Negociacao {
+
+  private ehDiaUltil(data: Date) {
+    return data.getDay() > this.DOMINGO && data.getDay() < this.SABADO;
+  }
+
+  private criaNegociacao(): Negociacao {
     const exp = /-/g;
     const date = new Date(this.inputData.value.replace(exp, ','));
     const quantidade = parseInt(this.inputQuantidade.value);
@@ -31,10 +43,15 @@ export class NecociacaoController {
     return new Negociacao(date, quantidade, valor);
   }
 
-  limparFormulario(): void {
+  private limparFormulario(): void {
     this.inputData.value = '';
     this.inputQuantidade.value = '';
     this.inputValor.value = '';
     this.inputData.focus();
+  }
+
+  private atualizarView(): void {
+    this.negociacaoView.update(this.negociacoes);
+    this.mensagemView.update('Negociação adicionada com sucesso!');
   }
 }

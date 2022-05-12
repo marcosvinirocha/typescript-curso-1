@@ -26,7 +26,6 @@ export class NegociacoesView extends View {
             </tbody>
         </table>`;
     }
-    // pode acessar a partir da classe NegociacoesView
     formartarData(data) {
         return new Intl.DateTimeFormat().format(data);
     }

@@ -5,8 +5,6 @@ export class Negociacoes {
     adiciona(negociacao) {
         this.negociacoes.push(negociacao);
     }
-    //nao modifica o array
-    //lista(): ReadonlyArray<Negociacao>
     lista() {
         return this.negociacoes;
     }
